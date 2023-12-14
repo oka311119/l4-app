@@ -1,0 +1,16 @@
+POST http://0.0.0.0:8080/item
+Content-Type: application/json
+
+{
+    "key1": "value1"
+}
+
+###
+
+PUT http://0.0.0.0:8080/item
+Content-Type: application/json
+
+{
+    "key1": "value1",
+    "key2": "value2"
+}
