@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/oka311119/l4-app/backend/command/internal/model"
-	"github.com/oka311119/l4-app/backend/command/internal/storage"
-	"github.com/oka311119/l4-app/backend/command/internal/storage/mock"
+	"github.com/oka311119/l4-app/backend/command/internal/entity"
+	"github.com/oka311119/l4-app/backend/command/internal/repository"
+	"github.com/oka311119/l4-app/backend/command/internal/repository/mock"
 )
 
 var repo storage.ItemRepository
@@ -16,7 +16,7 @@ func init() {
 }
 
 func CreateItem(c *gin.Context) {
-	var item model.Item
+	var item entity.Item
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -33,7 +33,7 @@ func CreateItem(c *gin.Context) {
 }
 
 func UpdateItem(c *gin.Context) {
-	var item model.Item
+	var item entity.Item
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
