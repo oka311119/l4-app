@@ -1,13 +1,21 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/oka311119/l4-app/backend/command/internal/handler"
+	"log"
+
+	"github.com/oka311119/l4-app/backend/command/internal/config"
+	"github.com/oka311119/l4-app/backend/command/internal/server"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	r := gin.Default()
-	r.POST("/item", handler.CreateItem)
-	r.PUT("/item", handler.UpdateItem)
-	r.Run() // listen and serve on 0.0.0.0:8080
+	if err := config.Init(); err != nil {
+		log.Fatalf("%s", err.Error())
+	}
+
+	app := server.NewApp()
+
+	if err := app.Run(viper.GetString("port")); err != nil {
+		log.Fatalf("%s", err.Error())
+	}
 }

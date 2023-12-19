@@ -1,6 +1,9 @@
-package delivery
+package http
 
 import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 )
 type Handler struct {
@@ -9,7 +12,7 @@ type Handler struct {
 
 func NewHandler(useCase auth.UseCase) *Handler {
 	return &Handler {
-		useCase: useCase
+		useCase: useCase,
 	}
 }
 
@@ -34,12 +37,12 @@ func (h *Handler) SignUp(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-type SignInput struct {
+type signInput struct {
 	Username string `json: "username"`
 	Password string `json: "password"`
 }
 
-type SignInResponse struct {
+type signInResponse struct {
 	Token string `json:"token"`
 }
 
@@ -51,7 +54,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.useCase.SingIn(c.Request.Context(), inp.Username, inp.Password)
+	token, err := h.useCase.SignIn(c.Request.Context(), inp.Username, inp.Password)
 	if err != nil {
 		if err == auth.ErrUserNotFound {
 			c.AbortWithStatus(http.StatusUnauthorized)

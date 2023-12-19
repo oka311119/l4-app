@@ -1,17 +1,21 @@
-package delivery
+package http
 
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
 )
 
 func TestSignUp(t *testing.T) {
 	r := gin.Default()
-	uc := new(usercase.AuthUseCaseMock)
+	uc := new(usecase.AuthUseCaseMock)
 
 	RegisterHTTPEndpoints(r, uc)
 
@@ -25,8 +29,8 @@ func TestSignUp(t *testing.T) {
 
 	uc.On("SignUp", signUpBody.Username, signUpBody.Password).Return(nil)
 
-	w := httptest.NewRecoder()
-	req, _ = http.NewRequest("POST", "/auth/sign-up", bytes.NewBuffer(body))
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/auth/sign-up", bytes.NewBuffer(body))
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
@@ -43,15 +47,15 @@ func TestSignIn(t *testing.T) {
 		Password: "testpass",
 	}
 
-	body, err := json.Marshal(signUpBody)
+	body, err := json.Marshal(signInBody)
 	assert.NoError(t, err)
 
-	uc.On("SignIn", signUpBody.Username, signInBody.Password).Return("jwt", nil)
+	uc.On("SignIn", signInBody.Username, signInBody.Password).Return("jwt", nil)
 
-	w := httptest.NewRecoder()
+	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/auth/sign-in", bytes.NewBuffer(body))
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, "{\"token\":\"jwt\"}", w.Body.string())
+	assert.Equal(t, "{\"token\":\"jwt\"}", w.Body.String())
 }

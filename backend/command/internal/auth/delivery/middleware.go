@@ -1,16 +1,19 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/oka311119/l4-app/backend/command/internal/auth"
 )
 
 type AuthMiddleware struct {
 	usecase auth.UseCase
 }
 
-func NewAuthMiddleware(usecase auth.UseCase) gin.HanlderFunc {
+func NewAuthMiddleware(usecase auth.UseCase) gin.HandlerFunc {
 	a := &AuthMiddleware{usecase: usecase}
 	return a.Handle
 }

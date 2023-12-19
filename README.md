@@ -1,8 +1,18 @@
 # l4
 
-## フロント
+## フロントエンド
 
 bun vite react
+CloudFront S3
+
+## バックエンド(Command)
+
+gin golang
+Fargate
+
+## バックエンド(Query)
+
+
 
 ## フォルダ構成
 
@@ -10,13 +20,15 @@ bun vite react
 project-root/
 │
 ├── backend/                    # バックエンド用のGolangコード
-│   ├── cmd/                    # アプリケーションのエントリポイント
-│   ├── internal/               # 内部パッケージ
-│   │   ├── api/                # APIハンドラーとルーティング
-│   │   ├── model/              # データモデルとビジネスロジック
-│   │   └── storage/            # データベースアクセスとストレージロジック
-│   ├── pkg/                    # 外部から使用可能なパッケージ（共通ユーティリティなど）
-│   └── Dockerfile              # Fargate用のDockerファイル
+│   ├── command/                # CQRS Command
+|   |   |── cmd/                # アプリケーションのエントリポイント
+|   |   ├── internal/           # 内部パッケージ
+|   |   │   ├── api/            # APIハンドラーとルーティング
+|   |   │   ├── model/          # データモデルとビジネスロジック
+|   |   │   └── storage/        # データベースアクセスとストレージロジック
+|   |   ├── pkg/                # 外部から使用可能なパッケージ（共通ユーティリティなど）
+|   |   └── Dockerfile          # Fargate用のDockerファイル
+│   └── query/                # CQRS Query
 │
 ├── frontend/                   # フロントエンド用のReact + Viteコード
 │   ├── public/                 # 静的ファイル（index.html, faviconなど）
