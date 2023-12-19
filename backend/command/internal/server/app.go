@@ -12,12 +12,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	authhttp "github.com/oka311119/l4-app/backend/command/internal/auth/delivery"
-	userrepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/dynamodb"
+
+	// userrepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/dynamodb"
+	a "github.com/oka311119/l4-app/backend/command/internal/auth/repository/localstorage"
 	authusecase "github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
+	"github.com/oka311119/l4-app/backend/command/internal/config"
 )
 
 type App struct {
@@ -26,17 +28,18 @@ type App struct {
 	authUC auth.UseCase
 }
 
-func NewApp() *App {
-	db := initDB()
+func NewApp(cfg *config.Config) *App {
+	// db := initDB(cfg)
 
-	userRepo := userrepo.NewUserRepository(db, viper.GetString("dynamodb.user_tablename"))
+	// userRepo := userrepo.NewUserRepository(db, cfg.AWS.DynamoDB.UserTableName)
+	userRepo := a.NewUserLocalStorage()
 
 	return &App{
 		authUC: authusecase.NewAuthUseCase(
 			userRepo,
-			viper.GetString("auth.hash_salt"),
-			[]byte(viper.GetString("auth.signing_key")),
-			viper.GetDuration("auth.token_ttl"),
+			cfg.Auth.Pepper,
+			[]byte(cfg.Auth.SigningKey),
+			time.Duration(cfg.Auth.TokenTTL),
 		),
 	}
 }
@@ -82,9 +85,9 @@ func (a *App) Run(port string) error {
 	return a.httpServer.Shutdown(ctx)
 }
 
-func initDB() *dynamodb.DynamoDB {
+func initDB(cfg *config.Config) *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(viper.GetString("aws.region")),
+		Region: aws.String(cfg.AWS.Region),
 	})
 	if err != nil {
 		log.Fatalf("Error occurred while establishing connection to AWS: %s", err)

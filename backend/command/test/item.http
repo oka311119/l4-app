@@ -1,16 +1,17 @@
-POST http://0.0.0.0:8080/item
+POST http://localhost:3000/auth/sign-in
 Content-Type: application/json
 
 {
-    "key1": "value1"
+    "username": "username",
+    "password": "pass"
 }
 
 ###
 
-PUT http://0.0.0.0:8080/item
+POST http://localhost:3000/auth/sign-up
 Content-Type: application/json
 
 {
-    "key1": "value1",
-    "key2": "value2"
+    "username": "username",
+    "password": "pass"
 }

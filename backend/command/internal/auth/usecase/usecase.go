@@ -19,28 +19,31 @@ type AuthClaims struct {
 
 type AuthUseCase struct {
 	userRepo auth.UserRepository
-	hashSalt string
+	pepper string
 	signingKey []byte
 	expireDuration time.Duration
 }
 
 func NewAuthUseCase(
 	userRepo auth.UserRepository,
-	hashSalt string,
+	pepper string,
 	signingKey []byte,
 	tokenTTL time.Duration) *AuthUseCase {
 	return &AuthUseCase{
 		userRepo: userRepo,
-		hashSalt: hashSalt,
+		pepper: pepper,
 		signingKey: signingKey,
 		expireDuration: time.Second * tokenTTL,
 	}
 }
 
 func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) error {
+	salt := "salt" //TODO: salt生成
+
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
-	pwd.Write([]byte(a.hashSalt))
+	pwd.Write([]byte(salt))
+	pwd.Write([]byte(a.pepper))
 
 	user := &entity.User{
 		Username: username,
@@ -51,9 +54,13 @@ func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) err
 }
 
 func (a *AuthUseCase) SignIn(ctx context.Context, username, password string) (string, error) {
+	// TODO: getUser and solt
+	salt := "salt"
+
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
-	pwd.Write([]byte(a.hashSalt))
+	pwd.Write([]byte(salt))
+	pwd.Write([]byte(a.pepper))
 	password = fmt.Sprintf("%x", pwd.Sum(nil))
 
 	user, err := a.userRepo.GetUser(ctx, username, password)

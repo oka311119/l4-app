@@ -12,7 +12,7 @@ import (
 
 func TestAuthFlow(t *testing.T) {
 	repo := new(mock.UserStorageMock)
-	uc := NewAuthUseCase(repo, "salt", []byte("secret"), 86400)
+	uc := NewAuthUseCase(repo, "pepper", []byte("secret"), 86400)
 
 	var (
 		username = "user"
@@ -22,7 +22,7 @@ func TestAuthFlow(t *testing.T) {
 		
 		user = &entity.User{
 			Username: username,
-			Password: "11f5639f22525155cb0b43573ee4212838c78d87",	// sha1 of pass+salt
+			Password: "c8b2505b76926abdc733523caa9f439142f66aa7293a7baaac0aed41a191eef6",	// sha256 of pass+salt+pepper
 		}
 	)
 

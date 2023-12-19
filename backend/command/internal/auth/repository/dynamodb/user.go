@@ -68,10 +68,11 @@ func (r UserRepository) GetUser(ctx context.Context, username, password string) 
 		return nil, err
 	}
 
-	// TODO: 確認
 	entityUser := &entity.User{
+		ID: user.ID,
 		Username: user.Username,
 		Password: user.Password,
 	}
+	
 	return entityUser, nil
 }

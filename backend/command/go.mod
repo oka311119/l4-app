@@ -2,10 +2,7 @@ module github.com/oka311119/l4-app/backend/command
 
 go 1.20
 
-require (
-	github.com/gin-gonic/gin v1.9.1
-	github.com/google/uuid v1.5.0
-)
+require github.com/gin-gonic/gin v1.9.1
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -29,10 +26,9 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.49.2 // indirect
+	github.com/aws/aws-sdk-go v1.49.2
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
