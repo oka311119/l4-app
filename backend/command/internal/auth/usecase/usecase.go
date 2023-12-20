@@ -10,6 +10,7 @@ import (
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
+	"github.com/oka311119/l4-app/backend/command/internal/helpers"
 )
 
 type AuthClaims struct {
@@ -22,23 +23,29 @@ type AuthUseCase struct {
 	pepper string
 	signingKey []byte
 	expireDuration time.Duration
+	saltGen helpers.ISaltGenerator
 }
 
 func NewAuthUseCase(
 	userRepo auth.UserRepository,
 	pepper string,
 	signingKey []byte,
-	tokenTTL time.Duration) *AuthUseCase {
+	tokenTTL time.Duration,
+	saltGen helpers.ISaltGenerator) *AuthUseCase {
 	return &AuthUseCase{
 		userRepo: userRepo,
 		pepper: pepper,
 		signingKey: signingKey,
 		expireDuration: time.Second * tokenTTL,
+		saltGen: saltGen,
 	}
 }
 
 func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) error {
-	salt := "salt" //TODO: salt生成
+	salt, err := a.saltGen.Generate()
+	if err != nil {
+		return auth.ErrFailedSaltGeneration
+	}
 
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
@@ -48,24 +55,26 @@ func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) err
 	user := &entity.User{
 		Username: username,
 		Password: fmt.Sprintf("%x", pwd.Sum(nil)),
+		Salt: salt,
 	}
 
 	return a.userRepo.CreateUser(ctx, user)
 }
 
 func (a *AuthUseCase) SignIn(ctx context.Context, username, password string) (string, error) {
-	// TODO: getUser and solt
-	salt := "salt"
-
-	pwd := sha256.New()
-	pwd.Write([]byte(password))
-	pwd.Write([]byte(salt))
-	pwd.Write([]byte(a.pepper))
-	password = fmt.Sprintf("%x", pwd.Sum(nil))
-
-	user, err := a.userRepo.GetUser(ctx, username, password)
+	user, err := a.userRepo.GetUser(ctx, username)
 	if err != nil {
 		return "", auth.ErrUserNotFound
+	}
+
+	// パスワード検証
+	pwd := sha256.New()
+	pwd.Write([]byte(password))
+	pwd.Write([]byte(user.Salt))
+	pwd.Write([]byte(a.pepper))
+
+	if user.Password != fmt.Sprintf("%x", pwd.Sum(nil)) {
+		return "", auth.ErrInvalidAccessToken
 	}
 
 	claims := AuthClaims{

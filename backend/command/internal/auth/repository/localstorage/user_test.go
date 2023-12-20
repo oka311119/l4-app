@@ -23,11 +23,11 @@ func TestGetUser(t *testing.T) {
 	err := s.CreateUser(context.Background(), user)
 	assert.NoError(t, err)
 
-	returnedUser, err := s.GetUser(context.Background(), "user", "password")
+	returnedUser, err := s.GetUser(context.Background(), "user")
 	assert.NoError(t, err)
 	assert.Equal(t, user, returnedUser)
 
-	returnedUser, err = s.GetUser(context.Background(), "user", "")
+	_, err = s.GetUser(context.Background(), "nonexistentuser")
 	assert.Error(t, err)
 	assert.Equal(t, err, auth.ErrUserNotFound)
 }

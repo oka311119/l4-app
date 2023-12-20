@@ -16,7 +16,7 @@ func(s *UserStorageMock) CreateUser(ctx context.Context, user *entity.User) erro
 	return args.Error(0)
 }
 
-func (s *UserStorageMock) GetUser(ctx context.Context, username, password string) (*entity.User, error) {
-	args := s.Called(username, password)
+func (s *UserStorageMock) GetUser(ctx context.Context, username string) (*entity.User, error) {
+	args := s.Called(username)
 	return args.Get(0).(*entity.User), args.Error(1)
 }

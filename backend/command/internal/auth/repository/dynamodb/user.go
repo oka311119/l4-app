@@ -14,6 +14,7 @@ type User struct {
 	ID       string `dynamodbav:"ID"`
 	Username string `dynamodbav:"Username"`
 	Password string `dynamodbav:"Password"`
+	Salt	 string `dynamodbav:"Salt"`
 }
 
 type UserRepository struct {
@@ -44,15 +45,12 @@ func (r UserRepository) CreateUser(ctx context.Context, user *entity.User) error
 	return err
 }
 
-func (r UserRepository) GetUser(ctx context.Context, username, password string) (*entity.User, error) {
+func (r UserRepository) GetUser(ctx context.Context, username string) (*entity.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(r.tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"Username": {
 				S: aws.String(username),
-			},
-			"Password": {
-				S: aws.String(password),
 			},
 		},
 	}
@@ -72,7 +70,8 @@ func (r UserRepository) GetUser(ctx context.Context, username, password string) 
 		ID: user.ID,
 		Username: user.Username,
 		Password: user.Password,
+		Salt: user.Salt,
 	}
-	
+
 	return entityUser, nil
 }

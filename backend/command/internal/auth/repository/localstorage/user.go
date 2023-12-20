@@ -29,12 +29,12 @@ func (s *UserLocalStorage) CreateUser(ctx context.Context, user *entity.User) er
 	return nil
 }
 
-func (s *UserLocalStorage) GetUser(ctx context.Context, username, password string) (*entity.User, error) {
+func (s *UserLocalStorage) GetUser(ctx context.Context, username string) (*entity.User, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
 	for _, user := range s.users {
-		if user.Username == username && user.Password == password {
+		if user.Username == username {
 			return user, nil
 		}
 	}
