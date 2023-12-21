@@ -1,0 +1,3 @@
+package area
+
+var ()

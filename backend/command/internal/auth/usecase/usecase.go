@@ -10,7 +10,8 @@ import (
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
-	"github.com/oka311119/l4-app/backend/command/internal/helpers"
+	"github.com/oka311119/l4-app/backend/command/internal/helpers/saltgen"
+	"github.com/oka311119/l4-app/backend/command/internal/helpers/uuidgen"
 )
 
 type AuthClaims struct {
@@ -19,44 +20,50 @@ type AuthClaims struct {
 }
 
 type AuthUseCase struct {
-	userRepo auth.UserRepository
+	userRepo auth.Repository
 	pepper string
 	signingKey []byte
 	expireDuration time.Duration
-	saltGen helpers.ISaltGenerator
+	uuidgen uuidgen.UUIDGenerator
+	saltgen saltgen.SaltGenerator
 }
 
 func NewAuthUseCase(
-	userRepo auth.UserRepository,
+	userRepo auth.Repository,
 	pepper string,
 	signingKey []byte,
 	tokenTTL time.Duration,
-	saltGen helpers.ISaltGenerator) *AuthUseCase {
+	uuidgen uuidgen.UUIDGenerator,
+	saltgen saltgen.SaltGenerator) *AuthUseCase {
 	return &AuthUseCase{
 		userRepo: userRepo,
 		pepper: pepper,
 		signingKey: signingKey,
 		expireDuration: time.Second * tokenTTL,
-		saltGen: saltGen,
+		uuidgen: uuidgen,
+		saltgen: saltgen,
 	}
 }
 
 func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) error {
-	salt, err := a.saltGen.Generate()
+	salt, err := a.saltgen.Generate()
 	if err != nil {
 		return auth.ErrFailedSaltGeneration
 	}
 
+	id := a.uuidgen.V4()
+	
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
 	pwd.Write([]byte(salt))
 	pwd.Write([]byte(a.pepper))
-
-	user := &entity.User{
-		Username: username,
-		Password: fmt.Sprintf("%x", pwd.Sum(nil)),
-		Salt: salt,
-	}
+	
+	user := entity.NewUser(
+		id,
+		username,
+		fmt.Sprintf("%x", pwd.Sum(nil)),
+		salt,
+	)
 
 	return a.userRepo.CreateUser(ctx, user)
 }

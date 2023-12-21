@@ -66,12 +66,12 @@ func (r UserRepository) GetUser(ctx context.Context, username string) (*entity.U
 		return nil, err
 	}
 
-	entityUser := &entity.User{
-		ID: user.ID,
-		Username: user.Username,
-		Password: user.Password,
-		Salt: user.Salt,
-	}
+	entityUser := entity.NewUser( 
+		user.ID,
+		user.Username,
+		user.Password,
+		user.Salt,
+	)
 
 	return entityUser, nil
 }

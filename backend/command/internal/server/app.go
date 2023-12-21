@@ -15,12 +15,11 @@ import (
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	authhttp "github.com/oka311119/l4-app/backend/command/internal/auth/delivery"
-
-	// userrepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/dynamodb"
 	a "github.com/oka311119/l4-app/backend/command/internal/auth/repository/localstorage"
 	authusecase "github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
 	"github.com/oka311119/l4-app/backend/command/internal/config"
-	"github.com/oka311119/l4-app/backend/command/internal/helpers"
+	"github.com/oka311119/l4-app/backend/command/internal/helpers/saltgen"
+	// userrepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/dynamodb"
 )
 
 type App struct {
@@ -41,7 +40,7 @@ func NewApp(cfg *config.Config) *App {
 			cfg.Auth.Pepper,
 			[]byte(cfg.Auth.SigningKey),
 			time.Duration(cfg.Auth.TokenTTL),
-			helpers.NewSaltGenerator(),
+			&saltgen.Salt{},
 		),
 	}
 }

@@ -1,21 +1,17 @@
-package helpers
+package saltgen
 
 import (
 	"crypto/rand"
 	"encoding/hex"
 )
 
-type ISaltGenerator interface {
+type SaltGenerator interface {
 	Generate() (string, error)
 }
 
-type SaltGenerator struct {}
+type Salt struct {}
 
-func NewSaltGenerator() *SaltGenerator {
-	return &SaltGenerator{}
-}
-
-func (m *SaltGenerator) Generate() (string, error) {
+func (m *Salt) Generate() (string, error) {
 	salt := make([]byte, 16)
 	_, err := rand.Read(salt)
 	if err != nil {

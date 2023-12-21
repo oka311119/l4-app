@@ -1,11 +1,11 @@
-package helpers
+package saltgen
 
 import (
 	"testing"
 )
 
-func TestSaltGeneration(t *testing.T) {
-	gen := NewSaltGenerator()
+func TestSaltGenerate(t *testing.T) {
+	gen := &Salt{} 
 	salt, err := gen.Generate()
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
