@@ -1,3 +1,7 @@
 package area
 
-var ()
+import "errors"
+
+var (
+	ErrAreaIsAlreadyExists = errors.New("default area is already exist")
+)

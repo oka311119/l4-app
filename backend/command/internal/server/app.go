@@ -19,6 +19,7 @@ import (
 	authusecase "github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
 	"github.com/oka311119/l4-app/backend/command/internal/config"
 	"github.com/oka311119/l4-app/backend/command/internal/helpers/saltgen"
+	"github.com/oka311119/l4-app/backend/command/internal/helpers/uuidgen"
 	// userrepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/dynamodb"
 )
 
@@ -40,6 +41,7 @@ func NewApp(cfg *config.Config) *App {
 			cfg.Auth.Pepper,
 			[]byte(cfg.Auth.SigningKey),
 			time.Duration(cfg.Auth.TokenTTL),
+			&uuidgen.UUID{},
 			&saltgen.Salt{},
 		),
 	}
