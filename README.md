@@ -12,7 +12,7 @@ Fargate
 
 ## バックエンド(Query)
 
-
+https://github.com/zhashkevych/go-clean-architecture
 
 ## フォルダ構成
 
