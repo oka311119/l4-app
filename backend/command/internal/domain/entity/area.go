@@ -11,13 +11,13 @@ type Area struct {
 
 func NewArea(
 	id string,
-	userId string,
+	userID string,
 	name string,
 	createdAt time.Time,
 ) *Area {
 	return &Area{
 		ID: id,
-		UserID: userId,
+		UserID: userID,
 		Name: name,
 		CreatedAt: createdAt,
 	}

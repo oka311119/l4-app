@@ -24,11 +24,22 @@ func NewAreaUseCase(
 	}
 }
 
-func (a *AreaUseCase) CreateDefaultArea(ctx context.Context) error {
+func (a *AreaUseCase) CreateDefaultArea(ctx context.Context, userID string) error {
 	area := entity.NewArea(
 		a.uuidgen.V4(),
-		a.uuidgen.V4(),	//userid
+		userID,
 		"default",
+		time.Now(),
+	) 
+
+	return a.areaRepo.CreateArea(ctx, area)
+}
+
+func (a *AreaUseCase) CreateArea(ctx context.Context, userID, name string) error {
+	area := entity.NewArea(
+		a.uuidgen.V4(),
+		userID,
+		name,
 		time.Now(),
 	) 
 
