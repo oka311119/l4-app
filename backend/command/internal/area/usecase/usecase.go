@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"time"
 
 	"github.com/oka311119/l4-app/backend/command/internal/area"
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
@@ -11,7 +10,7 @@ import (
 
 type AreaUseCase struct {
 	areaRepo area.Repository
-	uuidgen uuidgen.UUIDGenerator
+	uuidgen  uuidgen.UUIDGenerator
 }
 
 func NewAreaUseCase(
@@ -20,7 +19,7 @@ func NewAreaUseCase(
 ) *AreaUseCase {
 	return &AreaUseCase{
 		areaRepo: areaRepo,
-		uuidgen: uuidgen,
+		uuidgen:  uuidgen,
 	}
 }
 
@@ -29,9 +28,7 @@ func (a *AreaUseCase) CreateDefaultArea(ctx context.Context, userID string) erro
 		a.uuidgen.V4(),
 		userID,
 		"default",
-		time.Now(),
-	) 
-
+	)
 	return a.areaRepo.CreateArea(ctx, area)
 }
 
@@ -40,8 +37,6 @@ func (a *AreaUseCase) CreateArea(ctx context.Context, userID, name string) error
 		a.uuidgen.V4(),
 		userID,
 		name,
-		time.Now(),
-	) 
-
+	)
 	return a.areaRepo.CreateArea(ctx, area)
 }
