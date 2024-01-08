@@ -6,6 +6,8 @@ type Area struct {
 	Name string
 }
 
+const DefaultAreaName = "$default"
+
 func NewArea(
 	id string,
 	userID string,

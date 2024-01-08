@@ -16,24 +16,25 @@ func TestAreaFlow(t *testing.T) {
 	uc := NewAreaUseCase(repo, &uuidgen.MockUUID{})
 
 	var (
+		ctx = context.Background()
+
 		areaID = uc.uuidgen.V4()
 		userID = uc.uuidgen.V4()
-		name   = "$default"
-		area   = entity.NewArea(
-			areaID,
-			userID,
-			name,
-		)
-		ctx = context.Background()
+		name   = "new-area"
+        area = entity.NewArea(
+            areaID,
+		    userID,
+		    name,
+	    )
 	)
-
-	// Create Default Area
-	repo.On("CreateArea", area).Return(nil)
-	err := uc.CreateDefaultArea(ctx, userID)
-	assert.NoError(t, err)
 
 	// Create Area
 	repo.On("CreateArea", area).Return(nil)
-	err = uc.CreateArea(ctx, userID, name)
+    err := uc.CreateArea(ctx, userID, name)
+	assert.NoError(t, err)
+
+    // Create Area: Invalid Area name
+	repo.On("CreateArea", area).Return(nil)
+    err = uc.CreateArea(ctx, userID, entity.DefaultAreaName)
 	assert.NoError(t, err)
 }

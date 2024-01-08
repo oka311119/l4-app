@@ -9,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
+	"github.com/oka311119/l4-app/backend/command/internal/area"
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 	"github.com/oka311119/l4-app/backend/command/internal/helpers/saltgen"
 	"github.com/oka311119/l4-app/backend/command/internal/helpers/uuidgen"
@@ -21,6 +22,7 @@ type AuthClaims struct {
 
 type AuthUseCase struct {
 	userRepo auth.Repository
+    areaRepo area.Repository
 	pepper string
 	signingKey []byte
 	expireDuration time.Duration
@@ -30,6 +32,7 @@ type AuthUseCase struct {
 
 func NewAuthUseCase(
 	userRepo auth.Repository,
+    areaRepo area.Repository,
 	pepper string,
 	signingKey []byte,
 	tokenTTL time.Duration,
@@ -37,6 +40,7 @@ func NewAuthUseCase(
 	saltgen saltgen.SaltGenerator) *AuthUseCase {
 	return &AuthUseCase{
 		userRepo: userRepo,
+        areaRepo: areaRepo,
 		pepper: pepper,
 		signingKey: signingKey,
 		expireDuration: time.Second * tokenTTL,
@@ -46,18 +50,19 @@ func NewAuthUseCase(
 }
 
 func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) error {
-	salt, err := a.saltgen.Generate()
+    // Generate new password
+    salt, err := a.saltgen.Generate()
 	if err != nil {
 		return auth.ErrFailedSaltGeneration
 	}
 
 	id := a.uuidgen.V4()
-	
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
 	pwd.Write([]byte(salt))
 	pwd.Write([]byte(a.pepper))
-	
+
+    // Create User
 	user := entity.NewUser(
 		id,
 		username,
@@ -65,7 +70,19 @@ func (a *AuthUseCase) SignUp(ctx context.Context, username, password string) err
 		salt,
 	)
 
-	return a.userRepo.CreateUser(ctx, user)
+    err = a.userRepo.CreateUser(ctx, user)
+    if err != nil {
+        return err
+    }
+
+    // Create Default Area
+    area := entity.NewArea(
+        a.uuidgen.V4(),
+        user.ID,
+        entity.DefaultAreaName,
+    )
+
+    return a.areaRepo.CreateArea(ctx, area)
 }
 
 func (a *AuthUseCase) SignIn(ctx context.Context, username, password string) (string, error) {
@@ -74,8 +91,8 @@ func (a *AuthUseCase) SignIn(ctx context.Context, username, password string) (st
 		return "", auth.ErrUserNotFound
 	}
 
-	// パスワード検証
-	pwd := sha256.New()
+	// Password validation
+    pwd := sha256.New()
 	pwd.Write([]byte(password))
 	pwd.Write([]byte(user.Salt))
 	pwd.Write([]byte(a.pepper))

@@ -23,20 +23,16 @@ func NewAreaUseCase(
 	}
 }
 
-func (a *AreaUseCase) CreateDefaultArea(ctx context.Context, userID string) error {
-	area := entity.NewArea(
-		a.uuidgen.V4(),
-		userID,
-		"$default",
-	)
-	return a.areaRepo.CreateArea(ctx, area)
-}
-
 func (a *AreaUseCase) CreateArea(ctx context.Context, userID, name string) error {
-	area := entity.NewArea(
+    if name == entity.DefaultAreaName {
+        return area.ErrAreaIsAlreadyExists
+    }
+
+    area := entity.NewArea(
 		a.uuidgen.V4(),
 		userID,
 		name,
 	)
+
 	return a.areaRepo.CreateArea(ctx, area)
 }
