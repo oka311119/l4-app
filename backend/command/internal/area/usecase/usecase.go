@@ -27,7 +27,7 @@ func (a *AreaUseCase) CreateDefaultArea(ctx context.Context, userID string) erro
 	area := entity.NewArea(
 		a.uuidgen.V4(),
 		userID,
-		"default",
+		"$default",
 	)
 	return a.areaRepo.CreateArea(ctx, area)
 }
