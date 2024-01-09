@@ -20,7 +20,7 @@ func NewHandler(useCase area.UseCase) *Handler {
 }
 
 type createAreaInput struct {
-    areaName string `json:"areaName"`
+    AreaName string `json:"areaname"`
 }
 
 func (h *Handler) CreateArea(c *gin.Context) {
@@ -45,7 +45,7 @@ func (h *Handler) CreateArea(c *gin.Context) {
         return
     }
 
-    if err := h.useCase.CreateArea(c.Request.Context(), user.ID, inp.areaName); err != nil {
+    if err := h.useCase.CreateArea(c.Request.Context(), user.ID, inp.AreaName); err != nil {
         c.AbortWithStatus(http.StatusInternalServerError)
         return
     }

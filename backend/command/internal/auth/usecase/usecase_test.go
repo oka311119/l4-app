@@ -19,13 +19,12 @@ func TestAuthFlow(t *testing.T) {
 	uc := NewAuthUseCase(repo, areaRepo, "pepper", []byte("secret"), 86400, &uuidgen.MockUUID{}, &saltgen.MockSalt{})
 
 	var (
+		ctx = context.Background()
+
 		id       = uc.uuidgen.V4()
 		username = "user"
 		password = "pass"
 		salt, _  = uc.saltgen.Generate()
-
-		ctx = context.Background()
-
 		user = entity.NewUser(
 			id,
 			username,

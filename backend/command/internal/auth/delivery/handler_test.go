@@ -19,15 +19,15 @@ func TestSignUp(t *testing.T) {
 
 	RegisterHTTPEndpoints(r, uc)
 
-	signUpBody := &signInput{
+	b := &signInput{
 		Username: "testuser",
 		Password: "testpass",
 	}
 
-	body, err := json.Marshal(signUpBody)
+	body, err := json.Marshal(b)
 	assert.NoError(t, err)
 
-	uc.On("SignUp", signUpBody.Username, signUpBody.Password).Return(nil)
+	uc.On("SignUp", b.Username, b.Password).Return(nil)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/auth/sign-up", bytes.NewBuffer(body))
@@ -42,15 +42,15 @@ func TestSignIn(t *testing.T) {
 
 	RegisterHTTPEndpoints(r, uc)
 
-	signInBody := &signInput{
+	b := &signInput{
 		Username: "testuser",
 		Password: "testpass",
 	}
 
-	body, err := json.Marshal(signInBody)
+	body, err := json.Marshal(b)
 	assert.NoError(t, err)
 
-	uc.On("SignIn", signInBody.Username, signInBody.Password).Return("jwt", nil)
+	uc.On("SignIn", b.Username, b.Password).Return("jwt", nil)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/auth/sign-in", bytes.NewBuffer(body))
