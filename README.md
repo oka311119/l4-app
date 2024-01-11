@@ -7,8 +7,11 @@ CloudFront S3
 
 ## バックエンド(Command)
 
-gin golang
+go
+gin
 Fargate
+Lambda
+DynamoDB
 
 ## バックエンド(Query)
 
