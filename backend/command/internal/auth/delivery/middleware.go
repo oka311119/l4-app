@@ -44,6 +44,6 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 		c.AbortWithStatus(status)
 		return
 	}
-	
-	c.Set(auth.CtxUserKey, user)
+
+	c.Set(auth.CtxUserIDKey, user)
 }

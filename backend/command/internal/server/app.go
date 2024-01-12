@@ -13,9 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/gin-gonic/gin"
 
+	areaRepo "github.com/oka311119/l4-app/backend/command/internal/area/repository/localstorage"
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	authhttp "github.com/oka311119/l4-app/backend/command/internal/auth/delivery"
-	a "github.com/oka311119/l4-app/backend/command/internal/auth/repository/localstorage"
+	authRepo "github.com/oka311119/l4-app/backend/command/internal/auth/repository/localstorage"
 	authusecase "github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
 	"github.com/oka311119/l4-app/backend/command/internal/config"
 	"github.com/oka311119/l4-app/backend/command/internal/helpers/saltgen"
@@ -33,11 +34,13 @@ func NewApp(cfg *config.Config) *App {
 	// db := initDB(cfg)
 
 	// userRepo := userrepo.NewUserRepository(db, cfg.AWS.DynamoDB.UserTableName)
-	userRepo := a.NewUserLocalStorage()
+	userRepo := authRepo.NewUserLocalStorage()
+	areaRepo := areaRepo.NewAreaLocalStorage()
 
 	return &App{
 		authUC: authusecase.NewAuthUseCase(
 			userRepo,
+			areaRepo,
 			cfg.Auth.Pepper,
 			[]byte(cfg.Auth.SigningKey),
 			time.Duration(cfg.Auth.TokenTTL),
@@ -57,17 +60,17 @@ func (a *App) Run(port string) error {
 
 	// Set up http handlers
 	authhttp.RegisterHTTPEndpoints(router, a.authUC)
-	
+
 	// API endpoints
 	// authMiddleware := authhttp.NewAuthMiddleware(a.authUC)
 	// api := router.Group("/api", authMiddleware)
 
 	// HTTP Server
 	a.httpServer = &http.Server{
-		Addr: ":" + port,
-		Handler: router,
-		ReadTimeout: 10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Addr:           ":" + port,
+		Handler:        router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
@@ -78,7 +81,7 @@ func (a *App) Run(port string) error {
 	}()
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt,os.Interrupt)
+	signal.Notify(quit, os.Interrupt, os.Interrupt)
 
 	<-quit
 
@@ -95,7 +98,7 @@ func initDB(cfg *config.Config) *dynamodb.DynamoDB {
 	if err != nil {
 		log.Fatalf("Error occurred while establishing connection to AWS: %s", err)
 	}
-	
+
 	db := dynamodb.New(sess)
 
 	// Try to list tables to verify connection
@@ -104,7 +107,6 @@ func initDB(cfg *config.Config) *dynamodb.DynamoDB {
 	if err != nil {
 		log.Fatalf("Error occurred while trying to connect to DynamoDB: %s", err)
 	}
-	
+
 	return db
 }
-

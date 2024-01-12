@@ -4,10 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/oka311119/l4-app/backend/command/internal/area"
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 )
-
 
 type AreaLocalStorage struct {
 	areas map[string]*entity.Area
@@ -28,4 +26,3 @@ func (s *AreaLocalStorage) CreateArea(ctx context.Context, area *entity.Area) er
 	s.areas[area.ID] = area
 	return nil
 }
-

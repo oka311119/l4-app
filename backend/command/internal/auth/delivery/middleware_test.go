@@ -10,14 +10,13 @@ import (
 
 	"github.com/oka311119/l4-app/backend/command/internal/auth"
 	"github.com/oka311119/l4-app/backend/command/internal/auth/usecase"
-	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 )
 
 func TestAuthMiddleware(t *testing.T) {
 	r := gin.Default()
 	uc := new(usecase.AuthUseCaseMock)
 
-	r.POST("/api/endpoint", NewAuthMiddleware(uc), func(c *gin.Context){
+	r.POST("/api/endpoint", NewAuthMiddleware(uc), func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})
 
@@ -35,14 +34,14 @@ func TestAuthMiddleware(t *testing.T) {
 
 	// Bearer Auth Header with no token request
 	w = httptest.NewRecorder()
-	uc.On("ParseToken", "").Return(&entity.User{}, auth.ErrInvalidAccessToken)
+	uc.On("ParseToken", "").Return("", auth.ErrInvalidAccessToken)
 	req.Header.Set("Authorization", "Bearer ")
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 
 	// Valid Auth Header
 	w = httptest.NewRecorder()
-	uc.On("ParseToken", "token").Return(&entity.User{}, nil)
+	uc.On("ParseToken", "token").Return("", nil)
 	req.Header.Set("Authorization", "Bearer token")
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)

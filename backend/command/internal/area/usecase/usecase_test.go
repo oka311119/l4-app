@@ -32,9 +32,4 @@ func TestAreaFlow(t *testing.T) {
 	repo.On("CreateArea", area).Return(nil)
     err := uc.CreateArea(ctx, userID, name)
 	assert.NoError(t, err)
-
-    // Create Area: Invalid Area name
-	// repo.On("CreateArea", area).Return(nil)
-    //err = uc.CreateArea(ctx, userID, entity.DefaultAreaName)
-	//assert.Error(t, err)
 }

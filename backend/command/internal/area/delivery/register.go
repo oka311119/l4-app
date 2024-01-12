@@ -6,10 +6,10 @@ import (
 )
 
 func RegisterHTTPEndpoints(router *gin.Engine, uc area.UseCase) {
-    h := NewHandler(uc)
+	h := NewHandler(uc)
 
-    areaEp := router.Group("/area")
-    {
-        areaEp.POST("/create", h.CreateArea)
-    }
+	areaEp := router.Group("/area")
+	{
+		areaEp.POST("", h.CreateArea)
+	}
 }

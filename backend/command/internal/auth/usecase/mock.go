@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 
-	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -21,7 +20,7 @@ func (m *AuthUseCaseMock) SignIn(ctx context.Context, username, password string)
 	return args.Get(0).(string), args.Error(1)
 }
 
-func (m *AuthUseCaseMock) ParseToken(ctx context.Context, accessToken string) (*entity.User, error) {
+func (m *AuthUseCaseMock) ParseToken(ctx context.Context, accessToken string) (string, error) {
 	args := m.Called(accessToken)
-	return args.Get(0).(*entity.User), args.Error(1)
+	return args.Get(0).(string), args.Error(1)
 }

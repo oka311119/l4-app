@@ -10,7 +10,7 @@ import (
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 )
 
-func TestGetUser(t *testing.T) {
+func TestUserLocalStorage(t *testing.T) {
 	s := NewUserLocalStorage()
 
 	id1 := "id"

@@ -9,7 +9,7 @@ import (
 	"github.com/oka311119/l4-app/backend/command/internal/domain/entity"
 )
 
-func TestCreateArea(t *testing.T) {
+func TestAreaLocalStorage(t *testing.T) {
 	s := NewAreaLocalStorage()
 
 	id1 := "id"
